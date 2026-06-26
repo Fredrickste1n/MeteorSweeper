@@ -145,7 +145,7 @@ void Grid::CreateStartingArea() {
                         if(j > 0) {
                             if(i > 0) {
                                 grid.at(i - 1).at(j - 1).isMeteor = false;
-                                grid.at(i).at(j - 1).isTurned = true;
+                                grid.at(i - 1).at(j - 1).isTurned = true;
                             }
                             grid.at(i).at(j - 1).isMeteor = false;
                             grid.at(i).at(j - 1).isTurned = true;
