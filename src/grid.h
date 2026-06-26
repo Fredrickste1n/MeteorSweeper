@@ -20,6 +20,8 @@ public:
     void FillGrid();
     void IsCellClicked();
     void CheckForMeteors();
+    void CreateStartingArea();
+    void FirstClick();
     void FlipAllCells();
 
     // Getters

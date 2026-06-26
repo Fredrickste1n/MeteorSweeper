@@ -10,6 +10,11 @@ using namespace std;
 const int screenWidth = 800;
 const int screenHeight = 672;
 
+// Game Contents
+int gameTime = 0;
+const Color textColor = Color{123, 31, 162, 255};
+bool firstClick = true;
+
 int main() {
     InitWindow(screenWidth, screenHeight, "MeteorSweeper");
     SetTargetFPS(60);
@@ -29,12 +34,23 @@ int main() {
 
 // Updating
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        grid.Update();
+        if(firstClick) {
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                grid.FirstClick();
+                firstClick = false;
+            }
+        }
+        else {
+            gameTime++;
+        }
 
+        grid.Update();
 
 // Drawing
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         DrawTexture(topBanner, 0, 0, WHITE);
+        DrawText(TextFormat("%04i", gameTime / 60), screenWidth - 112, 16, 40, textColor);
+
         grid.Draw();
 
 

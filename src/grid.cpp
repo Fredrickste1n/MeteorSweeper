@@ -61,7 +61,7 @@ void Grid::FillGrid() {
         std::vector<Cell> column;
         for(int j = 0; j < GetScreenHeight() / cellDimensions; j++) {
             bool isCellMeteor = false;
-            if(GetRandomValue(0, 7) == 0) { // Ratio of 1:8
+            if(GetRandomValue(1, 7) == 1) { // Ratio of 1:8
                 isCellMeteor = true;
             } 
             
@@ -69,8 +69,6 @@ void Grid::FillGrid() {
         }
         grid.push_back(column);
     }
-
-    CheckForMeteors(); // Updates each cell's adjacentMeteor parameter to be accurate after all of the cells are rendered
 }
 
 void Grid::IsCellClicked() {
@@ -81,9 +79,15 @@ void Grid::IsCellClicked() {
                 if(CheckCollisionPointRec(GetMousePosition(), cellRec)) {
                     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                         grid.at(i).at(j).isTurned = true;
+                        std::cout << i << ", " << j << std::endl;
                     }
                     else {
-                        grid.at(i).at(j).isFlagged = true;
+                        if(grid.at(i).at(j).isFlagged) {
+                            grid.at(i).at(j).isFlagged = false;
+                        }
+                        else {
+                            grid.at(i).at(j).isFlagged = true;
+                        }
                     }
                 }
             }
@@ -124,6 +128,65 @@ void Grid::CheckForMeteors() {
             }
         }
     }
+}
+
+void Grid::CreateStartingArea() {
+    // Creates the starting area around player's first click
+    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        for(int i = 0; i < (int)grid.size(); i++) {
+            for(int j = 0; j < (int)grid.at(0).size(); j++) {
+                Rectangle cellRec = {grid.at(i).at(j).x, grid.at(i).at(j).y, grid.at(i).at(j).width, grid.at(i).at(j).height};
+                if(CheckCollisionPointRec(GetMousePosition(), cellRec)) {
+                    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                        grid.at(i).at(j).isMeteor = false;
+                        grid.at(i).at(j).isTurned = true;
+
+                        // Ensures that all 8 adjacent cells won't be meteors upon player's first click
+                        if(j > 0) {
+                            if(i > 0) {
+                                grid.at(i - 1).at(j - 1).isMeteor = false;
+                                grid.at(i).at(j - 1).isTurned = true;
+                            }
+                            grid.at(i).at(j - 1).isMeteor = false;
+                            grid.at(i).at(j - 1).isTurned = true;
+                            if(i < (int)grid.size() - 1) {
+                                grid.at(i + 1).at(j - 1).isMeteor = false;
+                                grid.at(i + 1).at(j - 1).isTurned = true;
+                            }
+                        }
+
+                        if(i > 0) {
+                            grid.at(i - 1).at(j).isMeteor = false;
+                            grid.at(i - 1).at(j).isTurned = true;
+                        }
+                        if(i < (int)grid.size() - 1) {
+                            grid.at(i + 1).at(j).isMeteor = false;
+                            grid.at(i + 1).at(j).isTurned = true;
+                        }
+
+                        if(j < (int)grid.at(0).size() - 1) {
+                            if(i > 0) {
+                                grid.at(i - 1).at(j + 1).isMeteor = false;
+                                grid.at(i - 1).at(j + 1).isTurned = true;
+                            }
+                            grid.at(i).at(j + 1).isMeteor = false;
+                            grid.at(i).at(j + 1).isTurned = true;
+                            if(i < (int)grid.size() - 1) {
+                                grid.at(i + 1).at(j + 1).isMeteor = false;
+                                grid.at(i + 1).at(j + 1).isTurned = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Grid::FirstClick() { 
+    CreateStartingArea();
+
+    CheckForMeteors(); // Updates each cell's adjacentMeteor parameter to be accurate after all of the cells are rendered
 }
 
 void Grid::FlipAllCells() {
