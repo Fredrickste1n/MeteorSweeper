@@ -6,14 +6,18 @@
 
 using namespace std;
 
+// Game Attributes
+bool isGameStart = false;
+bool playerLose = false;
+int gameTime = 0;
+const Color textColor = Color{123, 31, 162, 255};
+bool firstClick = true;
+
 // Screen Parameters
 const int screenWidth = 800;
 const int screenHeight = 672;
 
-// Game Contents
-int gameTime = 0;
-const Color textColor = Color{123, 31, 162, 255};
-bool firstClick = true;
+
 
 int main() {
     InitWindow(screenWidth, screenHeight, "MeteorSweeper");
@@ -21,38 +25,67 @@ int main() {
 
     // Screen Textures
     //---------------------------------------------------------------
+    Texture2D mainMenu = LoadTexture("textures/mainMenu.png");
     Texture2D topBanner = LoadTexture("textures/topBanner.png");
 
     // Grid Declaration and initilization
     //---------------------------------------------------------------
     Grid grid(0, 64, 32);
-    grid.FillGrid();
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(BLACK);
 
+
 // Updating
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        if(firstClick) {
-            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                grid.FirstClick();
-                firstClick = false;
+        if(isGameStart) {
+            if(firstClick) {
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    grid.FirstClick();
+                    firstClick = false;
+                }
+            } else if(!playerLose){
+                gameTime++;
+            }
+
+            if(!playerLose) {
+                grid.Update(playerLose);
+            }
+
+            if(IsKeyPressed(KEY_ENTER)) {
+                grid.grid.clear();
+                grid.FillGrid();
+                firstClick = true;
+                gameTime = 0;
+                playerLose = false;
+            }
+
+            if(IsKeyPressed(KEY_BACKSPACE)) {
+                isGameStart = false;
+            }
+
+        } else {
+            if(IsKeyPressed(KEY_ENTER)) {
+                isGameStart = true;
+                grid.grid.clear();
+                grid.FillGrid();
+                firstClick = true;
+                gameTime = 0;
+                playerLose = false;
             }
         }
-        else {
-            gameTime++;
-        }
-
-        grid.Update();
 
 // Drawing
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        DrawTexture(topBanner, 0, 0, WHITE);
-        DrawText(TextFormat("%04i", gameTime / 60), screenWidth - 112, 16, 40, textColor);
+        if(isGameStart) {
+            DrawTexture(topBanner, 0, 0, WHITE);
+            DrawText(TextFormat("%04i", gameTime / 60), screenWidth - 112, 16, 40, textColor);
 
-        grid.Draw();
-
+            grid.Draw();
+        } else {
+            DrawTexture(mainMenu, 0, 0, WHITE);
+        }
 
         EndDrawing();
     }

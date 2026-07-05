@@ -1,7 +1,10 @@
 #include <iostream>
+#include <vector>
 #include <raylib.h>
 #include "grid.h"
 #include "cell.h"
+
+using namespace std;
 
 Color numColor = Color{117, 84, 122, 255};
 
@@ -51,15 +54,15 @@ void Grid::Draw() {
     }
 }
 
-void Grid::Update() {
-    IsCellClicked();
+void Grid::Update(bool & playerLose) {
+    IsCellClicked(playerLose);
     FlipAllCells();
 }
 
 void Grid::FillGrid() {
     for(int i = 0; i < GetScreenWidth() / cellDimensions; i++) {
         std::vector<Cell> column;
-        for(int j = 0; j < GetScreenHeight() / cellDimensions; j++) {
+        for(int j = 0; j < (GetScreenHeight() - 64) / cellDimensions; j++) {
             bool isCellMeteor = false;
             if(GetRandomValue(1, 7) == 1) { // Ratio of 1:8
                 isCellMeteor = true;
@@ -71,7 +74,7 @@ void Grid::FillGrid() {
     }
 }
 
-void Grid::IsCellClicked() {
+void Grid::IsCellClicked(bool & playerLose) {
     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
         for(int i = 0; i < (int)grid.size(); i++) {
             for(int j = 0; j < (int)grid.at(0).size(); j++) {
@@ -79,7 +82,12 @@ void Grid::IsCellClicked() {
                 if(CheckCollisionPointRec(GetMousePosition(), cellRec)) {
                     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                         grid.at(i).at(j).isTurned = true;
-                        std::cout << i << ", " << j << std::endl;
+                        if(grid.at(i).at(j).isMeteor) {
+                            playerLose = true;
+                        } else {
+                            TurnSurroundingCells(i, j);
+                        }
+                        
                     }
                     else {
                         if(grid.at(i).at(j).isFlagged) {
@@ -98,7 +106,6 @@ void Grid::IsCellClicked() {
 void Grid::CheckForMeteors() {
     for(int i = 0; i < (int)grid.size(); i++) {
         for(int j = 0; j < (int)grid.at(0).size(); j++) {
-
             // Checks all 8 adjacent cells for being a meteor and detects border cells so no out of bounds
             if(j > 0) {
                 if(i > 0) {
@@ -130,7 +137,9 @@ void Grid::CheckForMeteors() {
     }
 }
 
-void Grid::CreateStartingArea() {
+vector<int> Grid::GetClickedCell() {
+    vector<int> cellIndex;
+
     // Creates the starting area around player's first click
     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         for(int i = 0; i < (int)grid.size(); i++) {
@@ -140,57 +149,78 @@ void Grid::CreateStartingArea() {
                     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                         grid.at(i).at(j).isMeteor = false;
                         grid.at(i).at(j).isTurned = true;
-
-                        // Ensures that all 8 adjacent cells won't be meteors upon player's first click
-                        if(j > 0) {
-                            if(i > 0) {
-                                grid.at(i - 1).at(j - 1).isMeteor = false;
-                                grid.at(i - 1).at(j - 1).isTurned = true;
-                            }
-                            grid.at(i).at(j - 1).isMeteor = false;
-                            grid.at(i).at(j - 1).isTurned = true;
-                            if(i < (int)grid.size() - 1) {
-                                grid.at(i + 1).at(j - 1).isMeteor = false;
-                                grid.at(i + 1).at(j - 1).isTurned = true;
-                            }
-                        }
-
-                        if(i > 0) {
-                            grid.at(i - 1).at(j).isMeteor = false;
-                            grid.at(i - 1).at(j).isTurned = true;
-                        }
-                        if(i < (int)grid.size() - 1) {
-                            grid.at(i + 1).at(j).isMeteor = false;
-                            grid.at(i + 1).at(j).isTurned = true;
-                        }
-
-                        if(j < (int)grid.at(0).size() - 1) {
-                            if(i > 0) {
-                                grid.at(i - 1).at(j + 1).isMeteor = false;
-                                grid.at(i - 1).at(j + 1).isTurned = true;
-                            }
-                            grid.at(i).at(j + 1).isMeteor = false;
-                            grid.at(i).at(j + 1).isTurned = true;
-                            if(i < (int)grid.size() - 1) {
-                                grid.at(i + 1).at(j + 1).isMeteor = false;
-                                grid.at(i + 1).at(j + 1).isTurned = true;
-                            }
-                        }
+                        
+                        cellIndex.push_back(i);
+                        cellIndex.push_back(j);
                     }
                 }
             }
         }
     }
+
+    return cellIndex;
 }
 
-void Grid::FirstClick() { 
-    CreateStartingArea();
+void Grid::TurnSurroundingCells(int xIndex, int yIndex) {
+    if(grid.at(xIndex).at(yIndex).adjacentMeteors == 0) {
+        if(yIndex > 0) {
+            if(xIndex > 0 && !grid.at(xIndex - 1).at(yIndex - 1).isTurned) {
+                grid.at(xIndex - 1).at(yIndex - 1).isTurned = true;
+                TurnSurroundingCells(xIndex - 1, yIndex - 1);
+            }
+
+            if(!grid.at(xIndex).at(yIndex - 1).isTurned) {
+                grid.at(xIndex).at(yIndex - 1).isTurned = true;
+                TurnSurroundingCells(xIndex, yIndex - 1);
+            }
+
+            if(xIndex < (int)grid.size() - 1 && !grid.at(xIndex + 1).at(yIndex - 1).isTurned) {
+                grid.at(xIndex + 1).at(yIndex - 1).isTurned = true;
+                TurnSurroundingCells(xIndex + 1, yIndex - 1);
+            }
+        }
+
+        if(xIndex > 0 && !grid.at(xIndex - 1).at(yIndex).isTurned) {
+            grid.at(xIndex - 1).at(yIndex).isTurned = true;
+            TurnSurroundingCells(xIndex - 1, yIndex);
+        }
+        if(xIndex < (int)grid.size() - 1 && !grid.at(xIndex + 1).at(yIndex).isTurned) {
+            grid.at(xIndex + 1).at(yIndex).isTurned = true;
+            TurnSurroundingCells(xIndex + 1, yIndex);
+        }
+
+        if(yIndex < (int)grid.at(0).size() - 1) {
+            if(xIndex > 0 && !grid.at(xIndex - 1).at(yIndex + 1).isTurned) {
+                grid.at(xIndex - 1).at(yIndex + 1).isTurned = true;
+                TurnSurroundingCells(xIndex - 1, yIndex + 1);
+            }
+
+            if(!grid.at(xIndex).at(yIndex + 1).isTurned) {
+                grid.at(xIndex).at(yIndex + 1).isTurned = true;
+                TurnSurroundingCells(xIndex, yIndex + 1);
+            }
+            
+            if(xIndex < (int)grid.size() - 1 && !grid.at(xIndex + 1).at(yIndex + 1).isTurned) {
+                grid.at(xIndex + 1).at(yIndex + 1).isTurned = true;
+                TurnSurroundingCells(xIndex + 1, yIndex + 1);
+            }
+        }
+    }
+}
+
+void Grid::FirstClick() {
+    vector<int> firstClickIndex = GetClickedCell();
 
     CheckForMeteors(); // Updates each cell's adjacentMeteor parameter to be accurate after all of the cells are rendered
+
+    if(firstClickIndex.size() == 2) {
+        cout << "hello first click " << firstClickIndex.at(0) << ", " << firstClickIndex.at(1) << endl;
+        TurnSurroundingCells(firstClickIndex.at(0), firstClickIndex.at(1));
+    }
 }
 
 void Grid::FlipAllCells() {
-    if(IsKeyPressed(KEY_ENTER)) {
+    if(IsKeyPressed(KEY_SPACE)) {
         for(int i = 0; i < (int)grid.size(); i++) {
             for(int j = 0; j < (int)grid.at(0).size(); j++) {
                 grid.at(i).at(j).isTurned = true;

@@ -9,18 +9,19 @@
 class Grid {
 private:
     float x, y, cellDimensions;
-    std::vector<std::vector<Cell>> grid;
     Texture2D cellBack, cellFront, cellMeteor, cellFlagged;
 public:
+    std::vector<std::vector<Cell>> grid;
     Grid(float x, float y, float cellDimensions);
 
     // Grid's methods
     void Draw();
-    void Update();
+    void Update(bool &);
     void FillGrid();
-    void IsCellClicked();
+    void IsCellClicked(bool &);
     void CheckForMeteors();
-    void CreateStartingArea();
+    std::vector<int> GetClickedCell();
+    void TurnSurroundingCells(int xIndex, int yIndex);
     void FirstClick();
     void FlipAllCells();
 
