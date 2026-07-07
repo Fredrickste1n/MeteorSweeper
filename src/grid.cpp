@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include "grid.h"
 #include "cell.h"
+#include "resources.h"
 
 using namespace std;
 
@@ -14,10 +15,16 @@ Grid::Grid(float xPos, float yPos, float cellDim) {
     x = xPos;
     y = yPos;
     cellDimensions = cellDim;
-    cellBack = LoadTexture("textures/cellTextures/cellBack.png");
-    cellFront = LoadTexture("textures/cellTextures/cellFront.png");
-    cellMeteor = LoadTexture("textures/cellTextures/cellMeteor.png");
-    cellFlagged = LoadTexture("textures/cellTextures/cellFlagged.png");
+
+    Image cellBackImg = LoadImageFromMemory(".png", cellBack_png, cellBack_png_size);
+    Image cellFrontImg = LoadImageFromMemory(".png", cellFront_png, cellFront_png_size);
+    Image cellMeteorImg = LoadImageFromMemory(".png", cellMeteor_png, cellMeteor_png_size);
+    Image cellFlaggedImg = LoadImageFromMemory(".png", cellFlagged_png, cellFlagged_png_size);
+
+    cellBack = LoadTextureFromImage(cellBackImg);
+    cellFront = LoadTextureFromImage(cellFrontImg);
+    cellMeteor = LoadTextureFromImage(cellMeteorImg);
+    cellFlagged = LoadTextureFromImage(cellFlaggedImg);
 }
 
 // Method Declarations

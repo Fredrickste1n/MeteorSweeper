@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include "cell.h"
 #include "grid.h"
+#include "resources.h"
 
 using namespace std;
 
@@ -19,18 +20,32 @@ bool firstClick = true;
 const int screenWidth = 800;
 const int screenHeight = 672;
 
+// Screen Textures
+Texture2D mainMenu;
+Texture2D topBanner;
+Texture2D gameWonBox;
+Texture2D controlsPage;
 
+// Pulls textures from textures.h
+void loadAssets() {
+    Image mainMenuImg = LoadImageFromMemory(".png", mainMenu_png, mainMenu_png_size);
+    Image topBannerImg = LoadImageFromMemory(".png", topBanner_png, topBanner_png_size);
+    Image gameWonBoxImg = LoadImageFromMemory(".png", gameWonBox_png, gameWonBox_png_size);
+    Image controlsPageImg = LoadImageFromMemory(".png", controlsPage_png, controlsPage_png_size);
+
+    mainMenu = LoadTextureFromImage(mainMenuImg);
+    topBanner = LoadTextureFromImage(topBannerImg);
+    gameWonBox = LoadTextureFromImage(gameWonBoxImg);
+    controlsPage = LoadTextureFromImage(controlsPageImg);
+}
 
 int main() {
     InitWindow(screenWidth, screenHeight, "MeteorSweeper");
     SetTargetFPS(60);
 
-    // Screen Textures
+    // Loads Textures
     //---------------------------------------------------------------
-    Texture2D mainMenu = LoadTexture("textures/mainMenu.png");
-    Texture2D topBanner = LoadTexture("textures/topBanner.png");
-    Texture2D gameWonBox = LoadTexture("textures/gameWonBox.png");
-    Texture2D controlsPage = LoadTexture("textures/controlsPage.png");
+    loadAssets();
 
     // Grid Declaration and initilization
     //---------------------------------------------------------------

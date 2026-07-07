@@ -2,6 +2,7 @@
 #include <vector>
 #include <raylib.h>
 #include "cell.h"
+#include "resources.h"
 
 #ifndef GRID_H
 #define GRID_H
