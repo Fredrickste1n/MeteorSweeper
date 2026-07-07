@@ -16,7 +16,7 @@ public:
 
     // Grid's methods
     void Draw();
-    void Update(bool &);
+    void Update(bool &, bool &);
     void FillGrid();
     void IsCellClicked(bool &);
     void CheckForMeteors();
@@ -24,6 +24,7 @@ public:
     void TurnSurroundingCells(int xIndex, int yIndex);
     void FirstClick();
     void FlipAllCells();
+    void GameWin(bool &);
 
     // Getters
     float GetX();

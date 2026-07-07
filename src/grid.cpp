@@ -54,9 +54,10 @@ void Grid::Draw() {
     }
 }
 
-void Grid::Update(bool & playerLose) {
-    IsCellClicked(playerLose);
-    FlipAllCells();
+void Grid::Update(bool & isPlayerLose, bool & isPlayerWin) {
+    IsCellClicked(isPlayerLose);
+    //FlipAllCells(); // Game testing method not intended for finished game
+    GameWin(isPlayerWin);
 }
 
 void Grid::FillGrid() {
@@ -226,6 +227,28 @@ void Grid::FlipAllCells() {
                 grid.at(i).at(j).isTurned = true;
             }
         }
+    }
+}
+
+void Grid::GameWin(bool & isPlayerWin) {
+    int turnedCells = 0;
+    int totalCells = (int)grid.size() * (int)grid.at(0).size();
+    int totalMeteors = 0;
+
+    for(int i = 0; i < (int)grid.size(); i++) {
+        for(int j = 0; j < (int)grid.at(0).size(); j++) {
+            if(grid.at(i).at(j).isTurned) {
+                turnedCells++;
+            }
+            if(grid.at(i).at(j).isMeteor) {
+                totalMeteors++;
+            }
+        }
+    }
+
+    if(turnedCells == totalCells - totalMeteors) {
+        isPlayerWin = true;
+        std::cout << "you win" << std::endl;
     }
 }
 
