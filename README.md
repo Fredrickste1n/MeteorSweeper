@@ -1,7 +1,7 @@
-# Meteor Sweeper
+# ☄️ Meteor Sweeper
 This is a retextured version of Minesweeper that I built from scratch!
 
-## Overview
+## ℹ️ Overview
 - My program is built in C++
 - It uses the popular graphics library, raylib
     - raylib.com
@@ -9,18 +9,18 @@ This is a retextured version of Minesweeper that I built from scratch!
 - The graphics are very pixilated and created using pixilart
     - pixilart.com
 
-## Why make this?
+## ❓ Why make this?
 - I am just starting out in programming using C++ as of June 2026 (last month)
 - I wanted to recreate minesweepers as a challenge in order to enhance my skills
 - This repo is being submitted to the Stardance Hack Club Challenge as a software project
 - This is an open source project (obviously) but you might not want to try to gain any knowledge from my code
     - It's bad :(
 
-## How to run:
-### Downloading the application:
+## 🏃 How to run:
+### ⬇️ Downloading the application:
 - Coming soon!
 
-### Using my code:
+### 🧑‍💻 Using my code:
 - You need to install a C/C++ compiler as well as the raylib library
 - Both need to be added to your system's environment variables
 - Download the repo into your IDE
