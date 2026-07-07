@@ -4,10 +4,10 @@ This is a retextured version of Minesweeper that I built from scratch!
 ## ℹ️ Overview
 - My program is built in C++
 - It uses the popular graphics library, raylib
-    - raylib.com
+    - [raylib.com](raylib.com)
 - The code is very basic and barebones
 - The graphics are very pixilated and created using pixilart
-    - pixilart.com
+    - [pixilart.com](pixilart.com)
 
 ## ❓ Why make this?
 - I am just starting out in programming using C++ as of June 2026 (last month)
