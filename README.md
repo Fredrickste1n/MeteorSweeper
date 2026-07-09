@@ -18,6 +18,19 @@ This is a retextured version of Minesweeper that I built from scratch!
 
 ## 🏃 How to run:
 ### ⬇️ Downloading the application:
+#### 🍎 For Mac (Apple Silicon):
+- Download the MeteorSweeper.zip file to your Downloads folder
+- Open Apple's terminal
+    - ⌘ + Space
+- Run these commands in the terminal:
+    - cd ~/Downloads
+    - unzip MeteorSweeper.zip
+    - xattr -cr MeteorSweeper.app
+    - open MeteorSweeper.app
+- Move the MeteorSweeper.app folder into your applications
+    - This helps the computer know that this is an application for all purposes
+
+#### 🪟 For Windows:
 - Coming soon!
 
 ### 🧑‍💻 Using my code:
